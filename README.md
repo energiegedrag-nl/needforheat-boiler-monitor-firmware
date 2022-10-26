@@ -1,6 +1,6 @@
-# Twomes Presence Detector example
+# Twomes boiler BASE firmware
 
-This is a [template project](https://github.com/energietransitie/twomes-presence-detector/generate) that can be used to create firmware for measurement devices that use the [twomes-generic-esp-firmware](https://github.com/energietransitie/twomes-generic-esp-firmware) library.
+For the associated hardware design files for the Twomes boiler BASE and enclosure and tips and instructions how to produce and assemble the hardware, please see the [twomes-boiler-base-hardware](https://github.com/energietransitie/twomes-boiler-base-hardware) repository. 
 
 ## Table of contents
 * [General info](#general-info)
@@ -18,7 +18,7 @@ The Twomes Presence Detector primarily serves as an example and template reposit
 
 ## Measurements
 
-A Twomes Presence Detector measurement device, in addition to [generic data sent by any Twomes measurement device](https://github.com/energietransitie/twomes-generic-esp-firmware#readme), sends data about the following property via the [Twomes API](https://github.com/energietransitie/twomes-backoffice-api) to a Twomes server:
+A Twomes boiler BASE device, in addition to [generic data sent by any Twomes measurement device](https://github.com/energietransitie/twomes-generic-esp-firmware#readme), sends data about the following properties via the [Twomes API](https://github.com/energietransitie/twomes-backoffice-api) to a Twomes server:
 
 | Sensor | Property           | Unit | [Printf format](https://en.wikipedia.org/wiki/Printf_format_string) | Default measurement interval \[h:mm:ss\] | Description                            |
 |--------|--------------------|------|--------|-------------------|----------------------------------------|
@@ -34,14 +34,17 @@ To develop software for, or based on this software, see the [developing section 
 This example was tested on:
 - [M5Stack CoreInk](https://github.com/m5stack/M5-CoreInk)
 
-This example still needs to be tested n:
-- [LilyGO TTGO T7 Mini32 V1.3 ESP32](https://github.com/LilyGO/ESP32-MINI-32-V1.3)
-
 ## Features
 The example features all generic firmware tasks.
 
 Ready:
-* Generic firmware tasks using the [twomes-generic-esp-firmware](https://github.com/energietransitie/twomes-generic-esp-firmware) library, including presence detection based on Bluetooth name requests.
+* awesome feature 1;
+* awesome feature 2;
+* awesome feature 3.
+
+To-do:
+* wow improvement to be done 1;
+* wow improvement to be done 2.
 
 ## Status
 Project is: _in progress_
@@ -50,12 +53,16 @@ Project is: _in progress_
 This software is available under the [Apache 2.0 license](./LICENSE), Copyright 2022 [Research group Energy Transition, Windesheim University of Applied Sciences](https://windesheim.nl/energietransitie) 
 
 ## Credits
-This software was created by:
-* Nick van Ravenzwaaij · [@n-vr](https://github.com/n-vr)
-
+This software is a collaborative effort of:
+* Huub Buter · [@Github_handle_1](https://github.com/<github_handle_1>)
+* Mirjam van Wee · [@Github_handle_2](https://github.com/<github_handle_2>)
+* Kees Fokker · [@Github_handle_3](https://github.com/<github_handle_3>)
+ 
 Product owners:
+* Marco Winkelman · [@MarcoW71](https://github.com/MarcoW71)
 * Henri ter Hofte · [@henriterhofte](https://github.com/henriterhofte) · Twitter [@HeNRGi](https://twitter.com/HeNRGi)
 
 We use and gratefully acknowlegde the efforts of the makers of the following source code and libraries:
-* [ESP-IDF](https://github.com/espressif/esp-idf), by Espressif Systems, licensed under [Apache License 2.0](https://github.com/espressif/esp-idf/blob/9d34a1cd42f6f63b3c699c3fe8ec7216dd56f36a/LICENSE)
-* [twomes-generic-esp-firmware](https://github.com/energietransitie/twomes-generic-esp-firmware), by [Research group Energy Transition, Windesheim University of Applied Sciences](https://windesheim.nl/energietransitie), licensed under [Apache License 2.0](https://github.com/energietransitie/twomes-generic-esp-firmware/blob/main/LICENSE.md)
+* [OpenTherm Arduino/ESP8266 Library](https://github.com/ihormelnyk/opentherm_library/), by Ihor Melnyk, licensed under [MIT License](https://github.com/ihormelnyk/opentherm_library/blob/master/LICENSE)
+* [Twomes OpenTherm monitor](https://github.com/energietransitie/twomes-opentherm-monitor-firmware), by Research Group Energy Transition at Windesheim University of Applied Sciences, licenced under [Apache 2.0](https://raw.githubusercontent.com/energietransitie/twomes-opentherm-monitor-firmware/main/LICENSE)
+* [Twomes Boiler Monitor Module Firmware](https://github.com/energietransitie/twomes-boiler-monitor-firmware), by Research Group Energy Transition at Windesheim University of Applied Sciences, licenced under [Apache 2.0](https://raw.githubusercontent.com/energietransitie/twomes-opentherm-monitor-firmware/main/LICENSE)
