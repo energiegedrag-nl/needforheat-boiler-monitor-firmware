@@ -34,8 +34,8 @@ A Twomes boiler BASE device, in addition to [generic data sent by any Twomes mea
 |         | boilerMaxSupplyTemp      | °C                     | %.2f          | 0:05:00                        | 57           |      | MAX CH WATER SETPOINT                      |
 |         | boilerSupplyTemp         | °C                     | %.2f          | 0:01:00                        | 25           |      | BOILER WATER TEMP.                         |
 |         | boilerReturnTemp         | °C                     | %.2f          | 0:01:00                        | 28           |      | RETURN WATER TEMPERATURE                   |
-| DS18b20 | boilerTemp1              | °C                     | %.1f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
-| DS18b20 | boilerTemp2              | °C                     | %.1f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
+| DS18b20 | boilerTemp1              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
+| DS18b20 | boilerTemp2              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
 
 ## Deploying
 To deploy this software, see the [deploying section in the twomes-generic-esp-firmware library documentation](https://www.energietransitiewindesheim.nl/twomes-generic-esp-firmware/deploying/prerequisites/). The firmware needed can be found as a [release from this repository](https://github.com/energietransitie/twomes-presence-detector/releases).
