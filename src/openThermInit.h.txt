@@ -1,0 +1,21 @@
+#ifndef OPENTHERMINIT_H
+#define OPENTHERMINIT_H
+
+#include "openTherm.h"
+
+/***********OpenTherm***************/
+const int mInPin = MASTER_IN_PIN_GPIO;  
+const int mOutPin = MASTER_OUT_PIN_GPIO; //not conected
+
+const int sInPin = SLAVE_IN_PIN_GPIO;
+const int sOutPin = SLAVE_OUT_PIN_GPIO; //not connected
+
+OpenTherm mOT(mInPin, mOutPin);
+OpenTherm sOT(sInPin, sOutPin, true);
+
+void ICACHE_RAM_ATTR mHandleInterrupt(void *);
+void ICACHE_RAM_ATTR sHandleInterrupt(void *);
+
+void processRequest(unsigned long request, OpenThermResponseStatus status);
+
+#endif // OpenThermInit_h

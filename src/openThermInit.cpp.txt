@@ -1,0 +1,32 @@
+#include "openTherm.h"
+#include "openThermInit.h"
+#include <stdio.h>
+#include "string.h"
+
+
+void ICACHE_RAM_ATTR mHandleInterrupt(void *) {
+    mOT.handleInterrupt(NULL);
+}
+
+void ICACHE_RAM_ATTR sHandleInterrupt(void *) {
+    sOT.handleInterrupt(NULL);
+}
+
+char dataBufferSlave[10][10];
+int bufferSlaveCount = 0;
+char dataBufferMaster[10][10];
+int bufferMasterCount = 0;
+
+void processRequest(unsigned long request, OpenThermResponseStatus status) {
+    ESP_LOGD("processRequest", "Request frame from thermostat: %lX", request); //TODO: Can ESP_LOGD  be used from an interrupt?
+    char request_data[10];
+    sprintf(request_data, "T%lX", request); 
+    strcpy(dataBufferSlave[bufferSlaveCount++], request_data);
+    unsigned long response = mOT.sendRequest(request);
+    if (response) {
+        ESP_LOGD("processRequest", "Response frame from boiler: %lX", response); //TODO: Can ESP_LOGD  be used from an interrupt?
+        char response_data[10];
+        sprintf(response_data, "B%lX", response); 
+        strcpy(dataBufferMaster[bufferMasterCount++], response_data);
+    }
+}
