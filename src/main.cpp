@@ -10,6 +10,8 @@
 
 constexpr const char *DEVICE_TYPE_NAME = "twomes-boiler-base-firmware";
 
+
+
 #include <stdio.h>
 #include "string.h"
 #include "esp_system.h"

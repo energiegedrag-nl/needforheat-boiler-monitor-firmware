@@ -5,15 +5,22 @@
 #include <stdio.h>
 #include "string.h"
 
+const int mInPin = MASTER_IN_PIN_GPIO;  
+const int mOutPin = MASTER_OUT_PIN_GPIO; //not conected
+
+const int sInPin = SLAVE_IN_PIN_GPIO;
+const int sOutPin = SLAVE_OUT_PIN_GPIO; //not connected
+
+extern OpenTherm mOT(mInPin, mOutPin);
+extern OpenTherm sOT(sInPin, sOutPin, true);
+
 #define BOOT_STARTUP_INTERVAL_MS (10 * 1000) // milliseconds ( 10 s * 1000 ms/s)
 #define BOOT_STARTUP_INTERVAL_TXT "Wating 10 seconds before next measurement data series is started"
 
 #define OPENTHERM_MONITOR_VERSION "V1.0.0"
 static const char *TAG = "Twomes ESP32 OpenTherm Monitor main";
 
-char variable_upload_payload_template[] = "{\"upload_time\": \"%d\",\"property_measurements\":[ "
-    "%s"
-    "]}";
+extern char variable_upload_payload_template[];
 
 static const char supply_temp_property_name[]       = "boilerSupplyTemp";
 static const char return_temp_property_name[]       = "boilerReturnTemp";
@@ -28,26 +35,19 @@ static const char rel_mod_lvl_property_name[]       = "relativeModulationLevel";
 static const char max_boiler_cap_property_name[]    = "maxBoilerCap";
 static const char max_supply_temp_property_name[]   = "boilerMaxSupplyTemp";
 
-
-const int mInPin = MASTER_IN_PIN_GPIO;  
-const int mOutPin = MASTER_OUT_PIN_GPIO; //not conected
-
-const int sInPin = SLAVE_IN_PIN_GPIO;
-const int sOutPin = SLAVE_OUT_PIN_GPIO; //not connected
-
 #define BOILER_MEASUREMENT_INTERVAL_S       10    // seconds
 #define ROOM_TEMP_MEASUREMENT_INTERVAL_S    300   // seconds (5 min * 60 s/min)
 #define REGULAR_MEASUREMENT_INTERVAL        30    // seconds
 // #define OPENTHERM_UPLOAD_INTERVAL           900   // seconds (15 min * 60 s/min )
 #define FLOAT_STRING_LENGTH 7
 #define BOILER_MEASUREMENT_MAX OPENTHERM_UPLOAD_INTERVAL / BOILER_MEASUREMENT_INTERVAL_S
-int boiler_measurement_count = 0;
+extern int boiler_measurement_count;
 
 #define ROOM_TEMPERATURE_MEASUREMENT_MAX OPENTHERM_UPLOAD_INTERVAL / ROOM_TEMP_MEASUREMENT_INTERVAL_S
-int room_temp_count = 0;
+extern int room_temp_count;
 
 #define REGULAR_MEASUREMENT_MAX OPENTHERM_UPLOAD_INTERVAL / REGULAR_MEASUREMENT_INTERVAL
-int regular_measurement_count = 0;
+extern int regular_measurement_count;
 
 #define TIMER_DIVIDER 80
 
@@ -64,21 +64,20 @@ int regular_measurement_count = 0;
 // char relModLvl_data[REGULAR_MEASUREMENT_MAX][FLOAT_STRING_LENGTH];         // Relative modulation level
 // int maxBoilerCapStorage_data[REGULAR_MEASUREMENT_MAX];                     // Maximum boiler capacity
 
-OpenTherm mOT(mInPin, mOutPin);
-OpenTherm sOT(sInPin, sOutPin, true);
 
-int ch_mode = -1 ;                          // Central heating mode (ON/OFF)
-int dhw_mode = -1;                          // Domestic hot water mode (ON/OFF)
-int flame = -1;                             // Burner status (ON/OFF)
-char roomSetpoint[FLOAT_STRING_LENGTH];     // Room temperature setpoint
-char roomTemp[FLOAT_STRING_LENGTH];         // Current room temperature
-char boilerSupplyTemp[FLOAT_STRING_LENGTH]; // Boiler CH supply water temperature
-char boilerReturnTemp[FLOAT_STRING_LENGTH]; // Boiler CH return water temperature
-int maxRelModLvl = -1;                      // Maximum relative modulation level
-int minModLvl = -1;                         // Minimum modulation level
-int relModLvl = -1;                         // Relative modulation level
-int maxBoilerCap = -1;                      // Maximum boiler capacity
-char boilerMaxSupplyTemp[FLOAT_STRING_LENGTH]; // Maximum water temperature
+
+extern int ch_mode;                          // Central heating mode (ON/OFF)
+extern int dhw_mode;                          // Domestic hot water mode (ON/OFF)
+extern int flame;                             // Burner status (ON/OFF)
+extern char roomSetpoint[FLOAT_STRING_LENGTH];     // Room temperature setpoint
+extern char roomTemp[FLOAT_STRING_LENGTH];         // Current room temperature
+extern char boilerSupplyTemp[FLOAT_STRING_LENGTH]; // Boiler CH supply water temperature
+extern char boilerReturnTemp[FLOAT_STRING_LENGTH]; // Boiler CH return water temperature
+extern int maxRelModLvl;                      // Maximum relative modulation level
+extern int minModLvl;                         // Minimum modulation level
+extern int relModLvl;                         // Relative modulation level
+extern int maxBoilerCap;                      // Maximum boiler capacity
+extern char boilerMaxSupplyTemp[FLOAT_STRING_LENGTH]; // Maximum water temperature
 
 // const char *ch_mode_name = "chmode";
 // const char *dhw_mode_name = "dhwmode";
@@ -92,21 +91,21 @@ char boilerMaxSupplyTemp[FLOAT_STRING_LENGTH]; // Maximum water temperature
 // const char *rel_mod_lvl_name = "relModLvl";
 // const char *max_boiler_cap_name = "maxBoilerCap";
 
-char hex[5];     // Max 4 hex chars (two bytes) + null-terminator
-int pointer = 0; // Used to keep track of position of received character
+extern char hex[5];     // Max 4 hex chars (two bytes) + null-terminator
+extern int pointer; // Used to keep track of position of received character
 
-char dataBufferSlave[10][10];
-int bufferSlaveCount = 0;
+extern char dataBufferSlave[10][10];
+extern int bufferSlaveCount;
 
-char dataBufferMaster[10][10];
-int bufferMasterCount = 0;
+extern char dataBufferMaster[10][10];
+extern int bufferMasterCount;
 
-int regular_timer_count = 0;
-int boiler_timer_count = 0;
-int room_temp_timer_count = 0;
-int upload_timer_count = 0;
+extern int regular_timer_count;
+extern int boiler_timer_count;
+extern int room_temp_timer_count;
+extern int upload_timer_count;
 
-int buffered_cycles_count = 0;
+extern int buffered_cycles_count;
 
 // char *storage_template = (char *)"OpenTherm-%d";
 

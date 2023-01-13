@@ -8,7 +8,37 @@
 
 #include "openThermInit.h"
 
+int regular_timer_count = 0;
+int boiler_timer_count = 0;
+int room_temp_timer_count = 0;
+int upload_timer_count = 0;
 
+int bufferSlaveCount = 0;
+char dataBufferSlave[10][10];
+int bufferMasterCount = 0;
+char dataBufferMaster[10][10];
+char hex[5];     // Max 4 hex chars (two bytes) + null-terminator
+int ch_mode = -1 ;                          // Central heating mode (ON/OFF)
+int dhw_mode = -1;                          // Domestic hot water mode (ON/OFF)
+int flame = -1;                             // Burner status (ON/OFF)
+int relModLvl = -1;                         // Relative modulation level
+char boilerSupplyTemp[FLOAT_STRING_LENGTH]; // Boiler CH supply water temperature
+char boilerReturnTemp[FLOAT_STRING_LENGTH]; // Boiler CH return water temperature
+char boilerMaxSupplyTemp[FLOAT_STRING_LENGTH]; // Maximum water temperature
+int maxRelModLvl = -1;                      // Maximum relative modulation level
+char roomSetpoint[FLOAT_STRING_LENGTH];     // Room temperature setpoint
+char roomTemp[FLOAT_STRING_LENGTH];         // Current room temperature
+int maxBoilerCap = -1;                      // Maximum boiler capacity
+int minModLvl = -1;                         // Minimum modulation level
+char variable_upload_payload_template[] = "{\"upload_time\": \"%d\",\"property_measurements\":[ "
+    "%s"
+    "]}";
+
+int buffered_cycles_count = 0;
+int pointer = 0; // Used to keep track of position of received character
+int regular_measurement_count = 0;
+int room_temp_count = 0;
+int boiler_measurement_count = 0;
 
 void ICACHE_RAM_ATTR mHandleInterrupt(void *) {
     mOT.handleInterrupt(NULL);
