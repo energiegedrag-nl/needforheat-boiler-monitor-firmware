@@ -10,8 +10,6 @@
 
 constexpr const char *DEVICE_TYPE_NAME = "twomes-boiler-base-firmware";
 
-
-
 #include <stdio.h>
 #include "string.h"
 #include "esp_system.h"
@@ -20,7 +18,7 @@ constexpr const char *DEVICE_TYPE_NAME = "twomes-boiler-base-firmware";
 #include "openTherm.h"
 #include "openThermInit.h"
 //#include "../lib/generic_esp_32.h"
-#include "generic_esp_32.h"
+//#include "generic_esp_32.h"
 
 const int DS_Pin1 = GPIO_NUM_25; //Temp sensor pins
 const int DS_Pin2 = GPIO_NUM_26;
@@ -52,35 +50,33 @@ void getTemperatureSensors(void *taskInfo )
     vTaskDelay(2000.0 / portTICK_PERIOD_MS);
 }
 
-void getTemperatureSensorsTest(void *taskInfo ) 
-{ 
-	auto taskName = Scheduler::GetName(taskInfo);	
-	ESP_LOGI(taskName.c_str(), "getTemperatureSensors");
-    float tempReading1 = 0;
-    float tempReading2 = 0;
-    for(int i = 0; i < 10000; i++)
-    {
-        ds18b20_init(DS_Pin1);
-        tempReading1 = ds18b20_get_temp();
-        //ESP_LOGD("readTemp", "Temp1: %.6f", tempReading1);
+// void getTemperatureSensorsTest(void *taskInfo ) 
+// { 
+// 	auto taskName = Scheduler::GetName(taskInfo);	
+// 	ESP_LOGI(taskName.c_str(), "getTemperatureSensors");
+//     float tempReading1 = 0;
+//     float tempReading2 = 0;
+//     for(int i = 0; i < 10000; i++)
+//     {
+//         ds18b20_init(DS_Pin1);
+//         tempReading1 = ds18b20_get_temp();
+//         //ESP_LOGD("readTemp", "Temp1: %.6f", tempReading1);
 
-        ds18b20_init(DS_Pin2);
-        tempReading2 = ds18b20_get_temp();
-        //ESP_LOGD("readTemp", "Temp2: %.6f", tempReading2);
-        ESP_LOGI("temp", "%d, %.2f, %.2f", i, tempReading1, tempReading2);
-        vTaskDelay(100.0 / portTICK_PERIOD_MS);
-    }
-    // Stable readings require a brief period before communication
-    vTaskDelay(2000.0 / portTICK_PERIOD_MS);
-}
+//         ds18b20_init(DS_Pin2);
+//         tempReading2 = ds18b20_get_temp();
+//         //ESP_LOGD("readTemp", "Temp2: %.6f", tempReading2);
+//         ESP_LOGI("temp", "%d, %.2f, %.2f", i, tempReading1, tempReading2);
+//         vTaskDelay(100.0 / portTICK_PERIOD_MS);
+//     }
+//     // Stable readings require a brief period before communication
+//     vTaskDelay(2000.0 / portTICK_PERIOD_MS);
+// }
 
-
-
-void openThermTest(void *taskInfo)
-{
-    auto taskName = Scheduler::GetName(taskInfo);	
-	ESP_LOGI(taskName.c_str(), "OpenThermTest");
-}
+// void openThermTest(void *taskInfo)
+// {
+//     auto taskName = Scheduler::GetName(taskInfo);	
+// 	ESP_LOGI(taskName.c_str(), "OpenThermTest");
+// }
 
 extern "C" void app_main(void)
 {
@@ -105,13 +101,13 @@ extern "C" void app_main(void)
 //     30, 
 //     Scheduler::Interval::MINUTES_1);
 
-    Scheduler::AddTask(openThermTest, 
-            "OpenThermTest", 
-            4096, 
-            nullptr, 
-            1, 
-            Scheduler::Interval::MINUTES_1);
-	Scheduler::Start();
+    // Scheduler::AddTask(openThermTest, 
+    //         "OpenThermTest", 
+    //         4096, 
+    //         nullptr, 
+    //         1, 
+    //         Scheduler::Interval::MINUTES_1);
+	// Scheduler::Start();
 
 	ESP_LOGD("app_main", "Alle task gestart");
 
@@ -186,12 +182,13 @@ extern "C" void app_main(void)
                 ESP_LOGD(TAG, "No boilerSupplyTemp and no boilerReturnTemp measured; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading boilerSupplyTemp and boileReturnTemp");
-                char *msg = get_boiler_measurements_data(time(NULL));
+                //char *msg = get_boiler_measurements_data(time(NULL));
+                std::string msg = get_boiler_measurements_data(time(NULL));
                 boilerSupplyTemp[0] = '\0';
                 boilerReturnTemp[0] = '\0';
-                //Huub kan uit denk ik: upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
+                //Huub kan uit denk ik moet vervangen worden door nieuwe manier van data uploaden: upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
                 ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                free(msg);
+                //free(msg);
                 ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
                 // strcpy(boilerSupplyTemp_data[boiler_measurement_count], boilerSupplyTemp);
                 // strcpy(boilerReturnTemp_data[boiler_measurement_count], boilerReturnTemp);
@@ -204,13 +201,13 @@ extern "C" void app_main(void)
                 ESP_LOGD(TAG, "No roomTemp no roomSetpoint and no boilerMaxSupplyTemp measured; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading roomTemp, roomSetpoint and boilerMaxSupplyTemp");
-                char *msg = get_5min_measurements_data(time(NULL));
+                std::string msg = get_5min_measurements_data(0/*time(NULL)*/);
                 roomTemp[0] = '\0'; 
                 roomSetpoint[0] = '\0';
                 boilerMaxSupplyTemp[0] = '\0';
                 //Huub: kan uit denk ik upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
                 ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                free(msg);
+                //free(msg);
                 ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
             }
             room_temp_timer_count = 0;
@@ -220,7 +217,7 @@ extern "C" void app_main(void)
                 ESP_LOGD(TAG, "No resular measurements; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading regular measurements");
-                char *msg = get_regular_measurements_data(time(NULL));
+                std::string msg = get_regular_measurements_data(0/*time(NULL)*/);
                 ch_mode = -1;
                 dhw_mode = -1;
                 flame = -1;
@@ -230,7 +227,7 @@ extern "C" void app_main(void)
                 maxBoilerCap = -1;
                 //Huub: kan uit denk ik upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
                 ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                free(msg);
+                //free(msg);
                 ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
                 // memcpy(&ch_mode_data[regular_measurement_count], &ch_mode, sizeof(ch_mode));                       // Central heating mode (ON/OFF)
                 // memcpy(&dhw_mode_data[regular_measurement_count], &dhw_mode, sizeof(dhw_mode));                    // Domestic hot water mode (ON/OFF)

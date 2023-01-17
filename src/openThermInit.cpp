@@ -4,9 +4,10 @@
 #include "driver/timer.h"
 #include <cmath>
 //#include "../lib/generic_esp_32.h" //Huub: copied from twomes-opentherm-monitor-firmware
-#include "generic_esp_32.h" //Huub: copied from twomes-opentherm-monitor-firmware
+//#include "generic_esp_32.h" //Huub: copied from twomes-opentherm-monitor-firmware
 
 #include "openThermInit.h"
+#include <util/format.hpp>
 
 int regular_timer_count = 0;
 int boiler_timer_count = 0;
@@ -39,6 +40,9 @@ int pointer = 0; // Used to keep track of position of received character
 int regular_measurement_count = 0;
 int room_temp_count = 0;
 int boiler_measurement_count = 0;
+
+OpenTherm mOT(mInPin, mOutPin);
+OpenTherm sOT(sInPin, sOutPin, true);
 
 void ICACHE_RAM_ATTR mHandleInterrupt(void *) {
     mOT.handleInterrupt(NULL);
@@ -324,28 +328,26 @@ void begin_opentherm() {
     
 }
 
-char *get_property_string_char(const char *prop_name, uint32_t time, char *value) {
+std::string get_property_string_char(const char *prop_name, uint32_t time, char *value) {
     
     if (value == NULL or value[0]=='\0') {
          char *empty_str = (char *)malloc(1);
          empty_str[0] = '\0';
          return empty_str;
     } else {
-        char property_string_char[] = "{\"property_name\": \"%s\","
-            "\"measurements\": ["
-            "{ \"timestamp\":\"%d\","
-            "\"value\":\"%s\"}]}";
+        std::string property_string_char = "{\"property_name\": \"%s\"," "\"measurements\": [" "{ \"timestamp\":\"%d\",""\"value\":\"%s\"}]}";
 
-        int property_size = variable_sprintf_size(property_string_char, 3, prop_name, time, value);
-        //Allocating enough memory so inputting the variables into the string doesn't overflow
-        char *property_str = (char *)malloc(property_size);
-        //Inputting variables into the plain json string from above(msgPlain).
-        snprintf(property_str, property_size, property_string_char, prop_name, time, value);
-        return property_str;
+        // int property_size = variable_sprintf_size(property_string_char, 3, prop_name, time, value);
+        // //Allocating enough memory so inputting the variables into the string doesn't overflow
+        // char *property_str = (char *)malloc(property_size);
+        // //Inputting variables into the plain json string from above(msgPlain).
+        // snprintf(property_str, property_size, property_string_char, prop_name, time, value);
+        // return property_str;
+        return Format::String(property_string_char, prop_name, time, value); //Huub lijkt hier niet goed te werken.
     }
 }
 
-char *get_property_string_integer(const char *prop_name, uint32_t time, int value) {
+std::string get_property_string_integer(const char *prop_name, uint32_t time, int value) {
     if (value == -1) {
          char *empty_str = (char *)malloc(1);
          empty_str[0] = '\0';
@@ -356,16 +358,17 @@ char *get_property_string_integer(const char *prop_name, uint32_t time, int valu
             "{ \"timestamp\":\"%d\","
             "\"value\":\"%d\"}]}";
 
-        int property_size = variable_sprintf_size(property_string_integer, 3, prop_name, time, value);
-        //Allocating enough memory so inputting the variables into the string doesn't overflow
-        char *property_str = (char *)malloc(property_size);
-        //Inputting variables into the plain json string from above(msgPlain).
-        snprintf(property_str, property_size, property_string_integer, prop_name, time, value);
-        return property_str;
+        // int property_size = variable_sprintf_size(property_string_integer, 3, prop_name, time, value);
+        // //Allocating enough memory so inputting the variables into the string doesn't overflow
+        // char *property_str = (char *)malloc(property_size);
+        // //Inputting variables into the plain json string from above(msgPlain).
+        // snprintf(property_str, property_size, property_string_integer, prop_name, time, value);
+        // return property_str;
+        return Format::String(property_string_integer, 3, prop_name, time, value);
     }
 }
 
-char *get_boiler_measurements_data(uint32_t time) {
+std::string get_boiler_measurements_data(uint32_t time) {
     //Get size of the message after inputting variables.
     std::string supply_temp_property(get_property_string_char(supply_temp_property_name, time, boilerSupplyTemp));
     std::string return_temp_property(get_property_string_char(return_temp_property_name, time, boilerReturnTemp));
@@ -381,10 +384,10 @@ char *get_boiler_measurements_data(uint32_t time) {
         combined_properties = combined_properties.substr(0,combined_properties.size()-2);
     }
 
-    int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
-    char *msg = (char *)malloc(msgSize);
-    snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
-    ESP_LOGD(TAG, "Data: %s", msg);
+    // int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    // char *msg = (char *)malloc(msgSize);
+    // snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
+    // ESP_LOGD(TAG, "Data: %s", msg);
 
     // memcpy(&ch_mode_data[regular_measurement_count], &ch_mode, sizeof(ch_mode));                       // Central heating mode (ON/OFF)
     // memcpy(&dhw_mode_data[regular_measurement_count], &dhw_mode, sizeof(dhw_mode));                    // Domestic hot water mode (ON/OFF)
@@ -396,10 +399,12 @@ char *get_boiler_measurements_data(uint32_t time) {
     // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap));
     // free(boiler_temp_property);
     // free(return_temp_property);
-    return msg;
+    
+    //return msg;
+    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
 }
 
-char *get_5min_measurements_data(uint32_t time) {
+std::string get_5min_measurements_data(uint32_t time) {
     //Get size of the message after inputting variables.
     std::string room_setpoint_property(get_property_string_char(room_setpoint_property_name, time, roomSetpoint));
     std::string room_temp_property(get_property_string_char(room_temp_property_name, time, roomTemp));
@@ -420,10 +425,10 @@ char *get_5min_measurements_data(uint32_t time) {
         combined_properties = combined_properties.substr(0,combined_properties.size()-2);
     }
 
-    int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
-    char *msg = (char *)malloc(msgSize);
-    snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
-    ESP_LOGD(TAG, "Data: %s", msg);
+    // int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    // char *msg = (char *)malloc(msgSize);
+    // snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
+    // ESP_LOGD(TAG, "Data: %s", msg);
 
     // memcpy(&ch_mode_data[regular_measurement_count], &ch_mode, sizeof(ch_mode));                       // Central heating mode (ON/OFF)
     // memcpy(&dhw_mode_data[regular_measurement_count], &dhw_mode, sizeof(dhw_mode));                    // Domestic hot water mode (ON/OFF)
@@ -435,10 +440,13 @@ char *get_5min_measurements_data(uint32_t time) {
     // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap));
     // free(boiler_temp_property);
     // free(return_temp_property);
-    return msg;
+    
+    //return msg;
+    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
+
 }
 
-char *get_regular_measurements_data(uint32_t time) {
+std::string get_regular_measurements_data(uint32_t time) {
     //Get size of the message after inputting variables.
     std::string ch_mode_property(get_property_string_integer(ch_mode_property_name, time, ch_mode));
     std::string dhw_mode_property(get_property_string_integer(dhw_mode_property_name, time, dhw_mode));
@@ -474,10 +482,10 @@ char *get_regular_measurements_data(uint32_t time) {
         combined_properties = combined_properties.substr(0,combined_properties.size()-2);
     }
 
-    int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
-    char *msg = (char *)malloc(msgSize);
-    snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
-    ESP_LOGD(TAG, "Data: %s", msg);
+    // int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    // char *msg = (char *)malloc(msgSize);
+    // snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
+    // ESP_LOGD(TAG, "Data: %s", msg);
 
 
     // memcpy(&ch_mode_data[regular_measurement_count], &ch_mode, sizeof(ch_mode));                       // Central heating mode (ON/OFF)
@@ -488,5 +496,8 @@ char *get_regular_measurements_data(uint32_t time) {
     // memcpy(&minModLvl_data[regular_measurement_count], &minModLvl, sizeof(minModLvl));                 // Minimum modulation level
     // strcpy(relModLvl_data[regular_measurement_count], relModLvl);                                      // Relative modulation level
     // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap));
-    return msg;
+    
+    //return msg;
+    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
+
 }

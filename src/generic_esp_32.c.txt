@@ -1,5 +1,5 @@
 //Huub: copied from twomes-opentherm-monitor-firmware
-#include "generic_esp_32.h"
+//#include "generic_esp_32.h"
 
 // static const char *TAG = "Twomes Generic Firmware Library ESP32";
 
@@ -176,7 +176,7 @@
 // void time_sync_notification_cb(struct timeval *tv) {
 //     ESP_LOGD(TAG, "Notification of a time synchronization event");
 // }
-
+/*
 char *get_types(char *stringf, int count) {
     char *stringfBuffer = stringf;
     char c = *stringf;
@@ -223,6 +223,7 @@ int variable_sprintf_size(char *string, int count, ...) {
     return totalSize;
 }
 
+*/
 // /* Event handler for catching system events */
 // void prov_event_handler(void *arg, esp_event_base_t event_base,
 //     int32_t event_id, void *event_data) {

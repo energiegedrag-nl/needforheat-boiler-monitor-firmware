@@ -11,8 +11,8 @@ const int mOutPin = MASTER_OUT_PIN_GPIO; //not conected
 const int sInPin = SLAVE_IN_PIN_GPIO;
 const int sOutPin = SLAVE_OUT_PIN_GPIO; //not connected
 
-extern OpenTherm mOT(mInPin, mOutPin);
-extern OpenTherm sOT(sInPin, sOutPin, true);
+extern OpenTherm mOT;
+extern OpenTherm sOT;
 
 #define BOOT_STARTUP_INTERVAL_MS (10 * 1000) // milliseconds ( 10 s * 1000 ms/s)
 #define BOOT_STARTUP_INTERVAL_TXT "Wating 10 seconds before next measurement data series is started"
@@ -123,8 +123,15 @@ void processRequest(unsigned long request, OpenThermResponseStatus status);
 
 void begin_opentherm();
 void processSendRequest(char data[9]);
-char *get_boiler_measurements_data(uint32_t time);
-char *get_5min_measurements_data(uint32_t time);
-char *get_regular_measurements_data(uint32_t time);
+// char *get_boiler_measurements_data(uint32_t time);
+// char *get_5min_measurements_data(uint32_t time);
+// char *get_regular_measurements_data(uint32_t time);
+
+std::string get_boiler_measurements_data(uint32_t time);
+std::string get_5min_measurements_data(uint32_t time);
+std::string get_regular_measurements_data(uint32_t time);
+std::string get_property_string_char(const char *prop_name, uint32_t time, char *value);
+std::string get_property_string_integer(const char *prop_name, uint32_t time, int value);
+std::string get_boiler_measurements_data(uint32_t time);
 
 #endif // OpenThermInit_h
