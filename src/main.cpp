@@ -17,8 +17,6 @@ constexpr const char *DEVICE_TYPE_NAME = "twomes-boiler-base-firmware";
 #include "ds18b20-single.h" //Include library
 #include "openTherm.h"
 #include "openThermInit.h"
-//#include "../lib/generic_esp_32.h"
-//#include "generic_esp_32.h"
 
 const int DS_Pin1 = GPIO_NUM_25; //Temp sensor pins
 const int DS_Pin2 = GPIO_NUM_26;
@@ -50,34 +48,6 @@ void getTemperatureSensors(void *taskInfo )
     vTaskDelay(2000.0 / portTICK_PERIOD_MS);
 }
 
-// void getTemperatureSensorsTest(void *taskInfo ) 
-// { 
-// 	auto taskName = Scheduler::GetName(taskInfo);	
-// 	ESP_LOGI(taskName.c_str(), "getTemperatureSensors");
-//     float tempReading1 = 0;
-//     float tempReading2 = 0;
-//     for(int i = 0; i < 10000; i++)
-//     {
-//         ds18b20_init(DS_Pin1);
-//         tempReading1 = ds18b20_get_temp();
-//         //ESP_LOGD("readTemp", "Temp1: %.6f", tempReading1);
-
-//         ds18b20_init(DS_Pin2);
-//         tempReading2 = ds18b20_get_temp();
-//         //ESP_LOGD("readTemp", "Temp2: %.6f", tempReading2);
-//         ESP_LOGI("temp", "%d, %.2f, %.2f", i, tempReading1, tempReading2);
-//         vTaskDelay(100.0 / portTICK_PERIOD_MS);
-//     }
-//     // Stable readings require a brief period before communication
-//     vTaskDelay(2000.0 / portTICK_PERIOD_MS);
-// }
-
-// void openThermTest(void *taskInfo)
-// {
-//     auto taskName = Scheduler::GetName(taskInfo);	
-// 	ESP_LOGI(taskName.c_str(), "OpenThermTest");
-// }
-
 extern "C" void app_main(void)
 {
 	// Add the generic tasks to the scheduler,
@@ -87,27 +57,14 @@ extern "C" void app_main(void)
 	GenericESP32Firmware::Initialize(DEVICE_TYPE_NAME);
     GenericESP32Firmware::InitializeTimeSync(); //init timesync want de RTC heeft zonder power gezeten.
 
-// Scheduler::AddTask(getTemperatureSensors, 
-//         "getTemperatureSensors", 
-//         4096, 
-//         nullptr, 
-//         2, 
-//         Scheduler::Interval::MINUTES_1);
+    Scheduler::AddTask(getTemperatureSensors, 
+            "getTemperatureSensors", 
+            4096, 
+            nullptr, 
+            2, 
+            Scheduler::Interval::MINUTES_1);
 
-// Scheduler::AddTask(getTemperatureSensorsTest, 
-//     "getTemperatureSensorsTest", 
-//     4096, 
-//     nullptr, 
-//     30, 
-//     Scheduler::Interval::MINUTES_1);
-
-    // Scheduler::AddTask(openThermTest, 
-    //         "OpenThermTest", 
-    //         4096, 
-    //         nullptr, 
-    //         1, 
-    //         Scheduler::Interval::MINUTES_1);
-	// Scheduler::Start();
+    Scheduler::Start();
 
 	ESP_LOGD("app_main", "Alle task gestart");
 
@@ -149,7 +106,7 @@ extern "C" void app_main(void)
 
     ESP_LOGD(TAG, "calling begin_opentherm()");
     begin_opentherm();
-
+    bool forceGetMeasurements = 0; //If High then skip the empty value checks and force the upload of empty data for testing.
     while (1) {
         sOT.process();
         //mOT.process();
@@ -178,15 +135,16 @@ extern "C" void app_main(void)
         // }
         //boilerSupplyTemp & boilerboilerReturnTemp timer
         if (boiler_timer_count >= BOILER_MEASUREMENT_INTERVAL_S) {
-            if (boilerSupplyTemp[0] == '\0' and boilerReturnTemp[0] == '\0') {
+            if ((boilerSupplyTemp[0] == '\0' and boilerReturnTemp[0] == '\0') && !forceGetMeasurements) {
                 ESP_LOGD(TAG, "No boilerSupplyTemp and no boilerReturnTemp measured; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading boilerSupplyTemp and boileReturnTemp");
                 //char *msg = get_boiler_measurements_data(time(NULL));
-                std::string msg = get_boiler_measurements_data(time(NULL));
+                /*std::string msg =*/ get_boiler_measurements_data(time(NULL));
                 boilerSupplyTemp[0] = '\0';
                 boilerReturnTemp[0] = '\0';
                 //Huub kan uit denk ik moet vervangen worden door nieuwe manier van data uploaden: upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
+
                 ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
                 //free(msg);
                 ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
@@ -197,11 +155,11 @@ extern "C" void app_main(void)
             boiler_timer_count = 0;
         }
         if (room_temp_timer_count >= ROOM_TEMP_MEASUREMENT_INTERVAL_S) {
-            if (roomTemp[0] == '\0' and  roomSetpoint[0] == '\0' and boilerMaxSupplyTemp[0] == '\0') {
+            if ((roomTemp[0] == '\0' and  roomSetpoint[0] == '\0' and boilerMaxSupplyTemp[0] == '\0') && !forceGetMeasurements) {
                 ESP_LOGD(TAG, "No roomTemp no roomSetpoint and no boilerMaxSupplyTemp measured; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading roomTemp, roomSetpoint and boilerMaxSupplyTemp");
-                std::string msg = get_5min_measurements_data(0/*time(NULL)*/);
+                /*std::string msg =*/ get_5min_measurements_data(0/*time(NULL)*/);
                 roomTemp[0] = '\0'; 
                 roomSetpoint[0] = '\0';
                 boilerMaxSupplyTemp[0] = '\0';
@@ -213,11 +171,12 @@ extern "C" void app_main(void)
             room_temp_timer_count = 0;
         }
         if (regular_timer_count >= REGULAR_MEASUREMENT_INTERVAL) {
-            if (ch_mode == -1 and dhw_mode == -1 and flame == -1 and maxRelModLvl == -1 and minModLvl == -1 and relModLvl == -1 and maxBoilerCap == -1) {
+            if ((ch_mode == -1 and dhw_mode == -1 and flame == -1 and maxRelModLvl == -1 and minModLvl == -1 and relModLvl == -1 and maxBoilerCap == -1) && !forceGetMeasurements) {
                 ESP_LOGD(TAG, "No resular measurements; nothing to upload");
             } else {
                 ESP_LOGD(TAG, "Measuring and uploading regular measurements");
-                std::string msg = get_regular_measurements_data(0/*time(NULL)*/);
+                /*std::string msg =*/ get_regular_measurements_data(0/*time(NULL)*/);
+                ESP_LOGD(TAG, "data and uploaded finished");
                 ch_mode = -1;
                 dhw_mode = -1;
                 flame = -1;
@@ -238,7 +197,6 @@ extern "C" void app_main(void)
                 // strcpy(relModLvl_data[regular_measurement_count], relModLvl);                                      // Relative modulation level
                 // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap)); // Maximum boiler capacity
                 // regular_measurement_count++;
-
             }
             regular_timer_count = 0;
         }
