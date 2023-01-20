@@ -368,7 +368,7 @@ std::string get_property_string_integer(const char *prop_name, uint32_t time, in
         // //Inputting variables into the plain json string from above(msgPlain).
         // snprintf(property_str, property_size, property_string_integer, prop_name, time, value);
         // return property_str;
-        return Format::String(property_string_integer, 3, prop_name, time, value);
+        return Format::String(property_string_integer, prop_name, time, value);
     }
 }
 
@@ -376,13 +376,18 @@ std::string get_boiler_measurements_data(uint32_t time) {
     //Get size of the message after inputting variables.
     std::string supply_temp_property(get_property_string_char(supply_temp_property_name, time, boilerSupplyTemp));
     std::string return_temp_property(get_property_string_char(return_temp_property_name, time, boilerReturnTemp));
-    Measurements::Measurement::AddFormatter("boilerSupplyTemp", "%c"); 
-    Measurements::Measurement boilerSupplyTempMeasurement("boilerSupplyTemp", boilerSupplyTemp);
+
+    float boilerSupplyTempFloat = std::stof(boilerSupplyTemp);
+    ESP_LOGI(TAG, "boilerSupplyTemp float: %.2f", boilerSupplyTempFloat); 
+    Measurements::Measurement::AddFormatter("boilerSupplyTemp", "%.2f"); 
+    Measurements::Measurement boilerSupplyTempMeasurement("boilerSupplyTemp", boilerSupplyTempFloat);
     auto boilerSupplyTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerSupplyTempSecureUploadQueue.AddMeasurement(boilerSupplyTempMeasurement);
 
-    Measurements::Measurement::AddFormatter("boilerReturnTemp", "%c"); 
-    Measurements::Measurement boilerReturnTempMeasurement("boilerReturnTemp", boilerReturnTemp);
+    float boilerReturnTempFloat = std::stof(boilerReturnTemp);
+    ESP_LOGI(TAG, "boilerReturnTemp float: %.2f", boilerSupplyTempFloat);
+    Measurements::Measurement::AddFormatter("boilerReturnTemp", "%.2f"); 
+    Measurements::Measurement boilerReturnTempMeasurement("boilerReturnTemp", boilerReturnTempFloat);
     auto boilerReturnTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerReturnTempSecureUploadQueue.AddMeasurement(boilerReturnTempMeasurement);
                 
@@ -414,7 +419,7 @@ std::string get_boiler_measurements_data(uint32_t time) {
     // free(return_temp_property);
     
     //return msg;
-    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    return Format::String(variable_upload_payload_template, time, combined_properties.c_str());
 }
 
 std::string get_5min_measurements_data(uint32_t time) {
@@ -422,19 +427,28 @@ std::string get_5min_measurements_data(uint32_t time) {
     std::string room_setpoint_property(get_property_string_char(room_setpoint_property_name, time, roomSetpoint));
     std::string room_temp_property(get_property_string_char(room_temp_property_name, time, roomTemp));
     std::string max_supply_temp_property(get_property_string_char(max_supply_temp_property_name, time, boilerMaxSupplyTemp));
-
-    Measurements::Measurement::AddFormatter("roomSetpointTemp", "%c"); 
-    Measurements::Measurement roomSetpointTempMeasurement("roomSetpointTemp", roomSetpoint);
+    
+    //ESP_LOGI(TAG, "roomSetpoint char: %c", roomSetpoint); 
+    float roomSetPointFloat = std::stof(roomSetpoint);
+    ESP_LOGI(TAG, "roomSetpoint float: %.2f", roomSetPointFloat); 
+    Measurements::Measurement::AddFormatter("roomSetpointTemp", "%.2f"); 
+    Measurements::Measurement roomSetpointTempMeasurement("roomSetpointTemp", roomSetPointFloat);
     auto roomSetpointTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     roomSetpointTempSecureUploadQueue.AddMeasurement(roomSetpointTempMeasurement);
 
-    Measurements::Measurement::AddFormatter("roomTemp", "%c"); 
-    Measurements::Measurement roomTempMeasurement("roomTemp", roomTemp);
+    //ESP_LOGI(TAG, "roomTemp char: %c", roomTemp); 
+    float roomTempFloat = std::stof(roomTemp);
+    ESP_LOGI(TAG, "roomTemp float: %.2f", roomTempFloat); 
+    Measurements::Measurement::AddFormatter("roomTemp", "%.2f"); 
+    Measurements::Measurement roomTempMeasurement("roomTemp", roomTempFloat);
     auto roomTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     roomTempSecureUploadQueue.AddMeasurement(roomTempMeasurement);
 
-    Measurements::Measurement::AddFormatter("boilerMaxSupplyTemp", "%c"); 
-    Measurements::Measurement boilerMaxSupplyTempMeasurement("boilerMaxSupplyTemp", boilerMaxSupplyTemp);
+    //ESP_LOGI(TAG, "boilerMaxSupplyTemp char: %c", boilerMaxSupplyTemp); 
+    float boilerMaxSupplyTempFloat = std::stof(boilerMaxSupplyTemp);
+    ESP_LOGI(TAG, "boilerMaxSupplyTemp float: %.2f", boilerMaxSupplyTempFloat); 
+    Measurements::Measurement::AddFormatter("boilerMaxSupplyTemp", "%.2f"); 
+    Measurements::Measurement boilerMaxSupplyTempMeasurement("boilerMaxSupplyTemp", boilerMaxSupplyTempFloat);
     auto boilerMaxSupplyTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerMaxSupplyTempSecureUploadQueue.AddMeasurement(boilerMaxSupplyTempMeasurement);
 
@@ -470,57 +484,57 @@ std::string get_5min_measurements_data(uint32_t time) {
     // free(return_temp_property);
     
     //return msg;
-    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    return Format::String(variable_upload_payload_template, time, combined_properties.c_str());
 
 }
 
 std::string get_regular_measurements_data(uint32_t time) {
     //Get size of the message after inputting variables.
-    ESP_LOGI(TAG, "Error 0"); //Huub: After the program crashes possibly a memory overload.
-    std::string ch_mode_property(get_property_string_integer(ch_mode_property_name, time, ch_mode));
-    std::string dhw_mode_property(get_property_string_integer(dhw_mode_property_name, time, dhw_mode));
-    std::string flame_property(get_property_string_integer(flame_property_name, time, flame));
-    std::string max_rel_mod_lvl_property(get_property_string_integer(max_rel_mod_lvl_property_name, time, maxRelModLvl));
-    std::string min_mod_lvl_property(get_property_string_integer(min_mod_lvl_property_name, time, minModLvl));
-    std::string rel_mod_lvl_property(get_property_string_integer(rel_mod_lvl_property_name, time, relModLvl));
-    std::string max_boiler_cap_property(get_property_string_integer(max_rel_mod_lvl_property_name, time, maxBoilerCap));
-    ESP_LOGI(TAG, "Error 1");
-    Measurements::Measurement::AddFormatter("ch_mode", "%c"); 
-    Measurements::Measurement ch_modeMeasurement("ch_mode", ch_mode);
+    std::string ch_mode_property(get_property_string_integer(ch_mode_property_name, time, ch_mode)); //d
+    std::string dhw_mode_property(get_property_string_integer(dhw_mode_property_name, time, dhw_mode)); //d
+    std::string flame_property(get_property_string_integer(flame_property_name, time, flame)); //d
+    std::string max_rel_mod_lvl_property(get_property_string_integer(max_rel_mod_lvl_property_name, time, maxRelModLvl)); //d
+    std::string min_mod_lvl_property(get_property_string_integer(min_mod_lvl_property_name, time, minModLvl)); //d
+    std::string rel_mod_lvl_property(get_property_string_integer(rel_mod_lvl_property_name, time, relModLvl)); //d
+    std::string max_boiler_cap_property(get_property_string_integer(max_rel_mod_lvl_property_name, time, maxBoilerCap)); //d  
+    ESP_LOGI(TAG, "ch_mode %d", ch_mode); 
+    ESP_LOGI(TAG, "dhw_mode %d", dhw_mode);
+    ESP_LOGI(TAG, "flame %d", flame);
+    ESP_LOGI(TAG, "max_rel_mod_lvl %d", maxRelModLvl);
+    ESP_LOGI(TAG, "min_mod_lvl %d", minModLvl);
+    ESP_LOGI(TAG, "rel_mod_lvl %d", relModLvl);
+    ESP_LOGI(TAG, "max_boiler_cap %d", maxBoilerCap);
+
+    
+    Measurements::Measurement::AddFormatter("isCentralHeatingModeOn", "%d"); //d Huub think it is isCentralHeatingModeOn 
+    Measurements::Measurement ch_modeMeasurement("isCentralHeatingModeOn", ch_mode);
     auto ch_modeSecureUploadQueue = SecureUpload::Queue::GetInstance();
     ch_modeSecureUploadQueue.AddMeasurement(ch_modeMeasurement);
-    ESP_LOGI(TAG, "Error 2");
-    Measurements::Measurement::AddFormatter("dhw_mode", "%c"); 
-    Measurements::Measurement dhw_modeMeasurement("dhw_mode", dhw_mode);
+    Measurements::Measurement::AddFormatter("isDomesticHotWaterModeOn", "%d"); 
+    Measurements::Measurement dhw_modeMeasurement("isDomesticHotWaterModeOn", dhw_mode);
     auto dhw_modeSecureUploadQueue = SecureUpload::Queue::GetInstance();
     dhw_modeSecureUploadQueue.AddMeasurement(dhw_modeMeasurement);
-    ESP_LOGI(TAG, "Error 3");
-    Measurements::Measurement::AddFormatter("isBoilerFlameOn", "%c"); //Huub: I think flame is the same as isBoilerFlameOn?
+    Measurements::Measurement::AddFormatter("isBoilerFlameOn", "%d"); //d Huub: I think flame is the same as isBoilerFlameOn?
     Measurements::Measurement isBoilerFlameOnMeasurement("isBoilerFlameOn", flame);
     auto isBoilerFlameOnSecureUploadQueue = SecureUpload::Queue::GetInstance();
     isBoilerFlameOnSecureUploadQueue.AddMeasurement(isBoilerFlameOnMeasurement);
-    ESP_LOGI(TAG, "Error 4");
-    Measurements::Measurement::AddFormatter("maxModulationLevel", "%c"); 
-    Measurements::Measurement maxModulationLevelMeasurement("maxModulationLevel", maxRelModLvl); //Huub: same as maxModulationLevel?
+    Measurements::Measurement::AddFormatter("maxModulationLevel", "%d"); 
+    Measurements::Measurement maxModulationLevelMeasurement("maxModulationLevel", maxRelModLvl); //d Huub: same as maxModulationLevel?
     auto maxModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     maxModulationLevelSecureUploadQueue.AddMeasurement(maxModulationLevelMeasurement);
-    ESP_LOGI(TAG, "Error 5");
-    Measurements::Measurement::AddFormatter("minModulationLevel", "%c"); 
-    Measurements::Measurement minModulationLevelMeasurement("minModulationLevel", minModLvl); //Huub: same as minModulationLevel?
+    Measurements::Measurement::AddFormatter("minModulationLevel", "%d"); 
+    Measurements::Measurement minModulationLevelMeasurement("minModulationLevel", minModLvl); //d Huub: same as minModulationLevel?
     auto minModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
-    minModulationLevelSecureUploadQueue.AddMeasurement(minModulationLevelMeasurement);
-    ESP_LOGI(TAG, "Error 6");
-    Measurements::Measurement::AddFormatter("relativeModulationLevel", "%c"); 
-    Measurements::Measurement relativeModulationLevelMeasurement("relativeModulationLevel", relModLvl); //Huub: same as relativeModulationLevel?
+    minModulationLevelSecureUploadQueue.AddMeasurement(minModulationLevelMeasurement); //d
+    Measurements::Measurement::AddFormatter("relativeModulationLevel", "%d"); 
+    Measurements::Measurement relativeModulationLevelMeasurement("relativeModulationLevel", relModLvl); //d Huub: same as relativeModulationLevel?
     auto relativeModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     relativeModulationLevelSecureUploadQueue.AddMeasurement(relativeModulationLevelMeasurement);
-    ESP_LOGI(TAG, "Error 7");
-    Measurements::Measurement::AddFormatter("maxBoilerCap", "%c"); 
+    Measurements::Measurement::AddFormatter("maxBoilerCap", "%d"); //d
     Measurements::Measurement maxBoilerCapMeasurement("maxBoilerCap", maxBoilerCap);
     auto maxBoilerCapSecureUploadQueue = SecureUpload::Queue::GetInstance();
     maxBoilerCapSecureUploadQueue.AddMeasurement(maxBoilerCapMeasurement);
 
-    ESP_LOGI(TAG, "Error 8");
     std::string combined_properties = "";
     if (!ch_mode_property.empty()) {
         combined_properties = combined_properties + ch_mode_property + ", ";
@@ -546,7 +560,6 @@ std::string get_regular_measurements_data(uint32_t time) {
     if (!combined_properties.empty()) {
         combined_properties = combined_properties.substr(0,combined_properties.size()-2);
     }
-    ESP_LOGI(TAG, "Error 9");
     // int msgSize = variable_sprintf_size(variable_upload_payload_template, 2, time, combined_properties.c_str());
     // char *msg = (char *)malloc(msgSize);
     // snprintf(msg, msgSize, variable_upload_payload_template, time, combined_properties.c_str());
@@ -563,6 +576,6 @@ std::string get_regular_measurements_data(uint32_t time) {
     // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap));
     
     //return msg;
-    return Format::String(variable_upload_payload_template, 2, time, combined_properties.c_str());
+    return Format::String(variable_upload_payload_template, time, combined_properties.c_str());
 
 }

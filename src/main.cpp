@@ -48,6 +48,7 @@ void getTemperatureSensors(void *taskInfo )
     vTaskDelay(2000.0 / portTICK_PERIOD_MS);
 }
 
+unsigned int fiveMinuteCounter = 0;
 extern "C" void app_main(void)
 {
 	// Add the generic tasks to the scheduler,
@@ -62,7 +63,7 @@ extern "C" void app_main(void)
             4096, 
             nullptr, 
             2, 
-            Scheduler::Interval::MINUTES_1);
+            Scheduler::Interval::MINUTES_5);
 
     Scheduler::Start();
 
@@ -70,113 +71,69 @@ extern "C" void app_main(void)
 
 	gpio_install_isr_service(0);
 
-    // ESP_LOGD(TAG, "calling initialize_intialize_button_and_led_gpio_gpio()");
-    // intialize_button_and_led_gpio();
-
     ESP_LOGD(TAG, "calling intialize_opentherm_gpio()");
     intialize_opentherm_gpio();
 
-    // twomes_device_provisioning(DEVICE_TYPE_NAME);
-
-    // ESP_LOGD(TAG, "Starting heartbeat task");
-    // xTaskCreatePinnedToCore(&heartbeat_task, "heartbeat_task", 4096, NULL, 1, NULL, 1);
-
-    // ESP_LOGD(TAG, BOOT_STARTUP_INTERVAL_TXT);
-    // vTaskDelay(BOOT_STARTUP_INTERVAL_MS / portTICK_PERIOD_MS);
-    
-    // ESP_LOGD(TAG, "Starting timesync task");
-    // xTaskCreatePinnedToCore(&timesync_task, "timesync_task", 4096, NULL, 1, NULL, 1);
-
-    // ESP_LOGD(TAG, BOOT_STARTUP_INTERVAL_TXT);
-    // vTaskDelay(BOOT_STARTUP_INTERVAL_MS / portTICK_PERIOD_MS);
-
-    // #ifdef CONFIG_TWOMES_PRESENCE_DETECTION
-    // ESP_LOGD(TAG, "Starting presence detection");
-    // start_presence_detection();
-
-    // ESP_LOGD(TAG, BOOT_STARTUP_INTERVAL_TXT);
-    // vTaskDelay(BOOT_STARTUP_INTERVAL_MS / portTICK_PERIOD_MS);
-
-    // // additional startup delay to make sure the first rount of presence detection before starting OpenTherm
-    // ESP_LOGD(TAG, BOOT_STARTUP_INTERVAL_TXT);
-    // vTaskDelay(BOOT_STARTUP_INTERVAL_MS / portTICK_PERIOD_MS);
-
-    // #endif
-    // ESP_LOGD(TAG, "Generic Setup complete");
-
     ESP_LOGD(TAG, "calling begin_opentherm()");
     begin_opentherm();
-    bool forceGetMeasurements = 0; //If High then skip the empty value checks and force the upload of empty data for testing.
-    while (1) {
+    bool forceGetMeasurements = 0; //If 1 then skip the empty value checks and force the upload of empty data for testing.
+    while (1) 
+    {
         sOT.process();
         //mOT.process();
-        if (bufferSlaveCount != 0) {
+        if (bufferSlaveCount != 0) 
+        {
             ESP_LOGD(TAG, "Slave Count: %d", bufferSlaveCount);
             processSendRequest(dataBufferSlave[--bufferSlaveCount]);
-            // ESP_LOGD(TAG, "upload_timer_count: %d", upload_timer_count);
-            // ESP_LOGD(TAG, "boiler_timer_count: %d", boiler_timer_count );
-            // ESP_LOGD(TAG, "room_temp_timer_count: %d", room_temp_timer_count );
-            // ESP_LOGD(TAG, "regular_timer_count: %d", regular_timer_count );
         }
-        if (bufferMasterCount != 0) {
+        if (bufferMasterCount != 0) 
+        {
             ESP_LOGD(TAG, "Master Count: %d", bufferMasterCount);
             processSendRequest(dataBufferMaster[--bufferMasterCount]);
-            // ESP_LOGD(TAG, "upload_timer_count: %d", upload_timer_count);
-            // ESP_LOGD(TAG, "boiler_timer_count: %d", boiler_timer_count );
-            // ESP_LOGD(TAG, "room_temp_timer_count: %d", room_temp_timer_count );
-            // ESP_LOGD(TAG, "regular_timer_count: %d", regular_timer_count );
         }
-        // if (upload_timer_count >= OPENTHERM_UPLOAD_INTERVAL) {
-        //     // ESP_LOGE(TAG, "Uploading all buffered data!");
-        //     // regular_measurement_count = 0;
-        //     // boiler_measurement_count = 0;
-        //     // room_temp_count = 0;
-        //     upload_timer_count = 0;
-        // }
-        //boilerSupplyTemp & boilerboilerReturnTemp timer
-        if (boiler_timer_count >= BOILER_MEASUREMENT_INTERVAL_S) {
-            if ((boilerSupplyTemp[0] == '\0' and boilerReturnTemp[0] == '\0') && !forceGetMeasurements) {
-                ESP_LOGD(TAG, "No boilerSupplyTemp and no boilerReturnTemp measured; nothing to upload");
-            } else {
-                ESP_LOGD(TAG, "Measuring and uploading boilerSupplyTemp and boileReturnTemp");
+        if (boiler_timer_count >= BOILER_MEASUREMENT_INTERVAL_S) 
+        {
+            if ((boilerSupplyTemp[0] == '\0' and boilerReturnTemp[0] == '\0') && !forceGetMeasurements) 
+            {
+                ESP_LOGD(TAG, "No boilerSupplyTemp and no boilerReturnTemp measured");
+            } 
+            else 
+            {
+                ESP_LOGD(TAG, "Measuring boilerSupplyTemp and boileReturnTemp");
                 //char *msg = get_boiler_measurements_data(time(NULL));
                 /*std::string msg =*/ get_boiler_measurements_data(time(NULL));
                 boilerSupplyTemp[0] = '\0';
                 boilerReturnTemp[0] = '\0';
-                //Huub kan uit denk ik moet vervangen worden door nieuwe manier van data uploaden: upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
-
-                ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                //free(msg);
-                ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
-                // strcpy(boilerSupplyTemp_data[boiler_measurement_count], boilerSupplyTemp);
-                // strcpy(boilerReturnTemp_data[boiler_measurement_count], boilerReturnTemp);
-                // boiler_measurement_count++;
             }
             boiler_timer_count = 0;
         }
-        if (room_temp_timer_count >= ROOM_TEMP_MEASUREMENT_INTERVAL_S) {
-            if ((roomTemp[0] == '\0' and  roomSetpoint[0] == '\0' and boilerMaxSupplyTemp[0] == '\0') && !forceGetMeasurements) {
-                ESP_LOGD(TAG, "No roomTemp no roomSetpoint and no boilerMaxSupplyTemp measured; nothing to upload");
-            } else {
-                ESP_LOGD(TAG, "Measuring and uploading roomTemp, roomSetpoint and boilerMaxSupplyTemp");
+        if (room_temp_timer_count >= ROOM_TEMP_MEASUREMENT_INTERVAL_S) 
+        {
+            if ((roomTemp[0] == '\0' and  roomSetpoint[0] == '\0' and boilerMaxSupplyTemp[0] == '\0') && !forceGetMeasurements) 
+            {
+                ESP_LOGD(TAG, "No roomTemp no roomSetpoint and no boilerMaxSupplyTemp measured");
+            } 
+            else 
+            {
+                ESP_LOGD(TAG, "Measuring roomTemp, roomSetpoint and boilerMaxSupplyTemp");
                 /*std::string msg =*/ get_5min_measurements_data(0/*time(NULL)*/);
                 roomTemp[0] = '\0'; 
                 roomSetpoint[0] = '\0';
                 boilerMaxSupplyTemp[0] = '\0';
-                //Huub: kan uit denk ik upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
-                ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                //free(msg);
-                ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
             }
             room_temp_timer_count = 0;
         }
-        if (regular_timer_count >= REGULAR_MEASUREMENT_INTERVAL) {
-            if ((ch_mode == -1 and dhw_mode == -1 and flame == -1 and maxRelModLvl == -1 and minModLvl == -1 and relModLvl == -1 and maxBoilerCap == -1) && !forceGetMeasurements) {
-                ESP_LOGD(TAG, "No resular measurements; nothing to upload");
-            } else {
-                ESP_LOGD(TAG, "Measuring and uploading regular measurements");
+        if (regular_timer_count >= REGULAR_MEASUREMENT_INTERVAL) 
+        {
+            if ((ch_mode == -1 and dhw_mode == -1 and flame == -1 and maxRelModLvl == -1 and minModLvl == -1 and relModLvl == -1 and maxBoilerCap == -1) && !forceGetMeasurements) 
+            {
+                ESP_LOGD(TAG, "No resular measurements");
+            } 
+            else 
+            {
+                ESP_LOGD(TAG, "Measuring regular measurements");
                 /*std::string msg =*/ get_regular_measurements_data(0/*time(NULL)*/);
-                ESP_LOGD(TAG, "data and uploaded finished");
+                ESP_LOGD(TAG, "data and download finshed");
                 ch_mode = -1;
                 dhw_mode = -1;
                 flame = -1;
@@ -184,29 +141,12 @@ extern "C" void app_main(void)
                 minModLvl = -1;
                 relModLvl = -1;
                 maxBoilerCap = -1;
-                //Huub: kan uit denk ik upload_data_to_server(VARIABLE_UPLOAD_ENDPOINT, POST_WITH_BEARER, msg, NULL, 0);
-                ESP_LOGD(TAG, "Free Heap before free(msg): %d", esp_get_free_heap_size());
-                //free(msg);
-                ESP_LOGD(TAG, "Free Heap after free(msg): %d", esp_get_free_heap_size());
-                // memcpy(&ch_mode_data[regular_measurement_count], &ch_mode, sizeof(ch_mode));                       // Central heating mode (ON/OFF)
-                // memcpy(&dhw_mode_data[regular_measurement_count], &dhw_mode, sizeof(dhw_mode));                    // Domestic hot water mode (ON/OFF)
-                // memcpy(&flame_data[regular_measurement_count], &flame, sizeof(flame));                             // Burner status (ON/OFF)
-                // strcpy(roomSetpoint_data[regular_measurement_count], roomSetpoint);                                // Return water temperature
-                // strcpy(maxRelModLvl_data[regular_measurement_count], maxRelModLvl);                                // Maximum relative modulation level
-                // memcpy(&minModLvl_data[regular_measurement_count], &minModLvl, sizeof(minModLvl));                 // Minimum modulation level
-                // strcpy(relModLvl_data[regular_measurement_count], relModLvl);                                      // Relative modulation level
-                // memcpy(&maxBoilerCapStorage_data[regular_measurement_count], &maxBoilerCap, sizeof(maxBoilerCap)); // Maximum boiler capacity
-                // regular_measurement_count++;
             }
             regular_timer_count = 0;
         }
-        // ESP_LOGD(TAG, "Upload Timer Count: %d", upload_timer_count);
-        // ESP_LOGD(TAG, "Boiler Timer Count: %d", boiler_timer_count);
-        // ESP_LOGD(TAG, "Room Temp Timer Count: %d", room_temp_timer_count);
-        // ESP_LOGD(TAG, "Regular Timer Count: %d", regular_timer_count);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-        // ESP_LOGD(TAG, "I'm looping in the opentherm loop!");
-        // vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(300000 / portTICK_PERIOD_MS); //Delaying for 10 minutes
+        fiveMinuteCounter++;
+        ESP_LOGD(TAG, "amount of times five minutes has past in the OpenTherm loop: %d", fiveMinuteCounter);
     }
-
 }
