@@ -31,16 +31,16 @@ void getTemperatureSensors(void *taskInfo )
     ds18b20_init(DS_Pin1);
     tempReading1 = ds18b20_get_temp();
     ESP_LOGD("readTemp", "Temp1: %.6f", tempReading1);
-    Measurements::Measurement::AddFormatter("boilerTemp1", "%.2f"); 
-    Measurements::Measurement temp1("boilerTemp1", tempReading1);
+    Measurements::Measurement::AddFormatter("temp1__degC", "%.2f"); 
+    Measurements::Measurement temp1("temp1__degC", tempReading1);
     auto secureUploadQueue1 = SecureUpload::Queue::GetInstance();
     secureUploadQueue1.AddMeasurement(temp1);
 
     ds18b20_init(DS_Pin2);
     tempReading2 = ds18b20_get_temp();
     ESP_LOGD("readTemp", "Temp2: %.6f", tempReading2);
-    Measurements::Measurement::AddFormatter("boilerTemp2", "%.2f"); 
-    Measurements::Measurement temp2("boilerTemp2", tempReading2);
+    Measurements::Measurement::AddFormatter("temp2__degC", "%.2f"); 
+    Measurements::Measurement temp2("temp2__degC", tempReading2);
     auto secureUploadQueue2 = SecureUpload::Queue::GetInstance();
     secureUploadQueue2.AddMeasurement(temp2);
     

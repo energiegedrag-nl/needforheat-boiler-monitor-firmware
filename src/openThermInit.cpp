@@ -379,15 +379,15 @@ std::string get_boiler_measurements_data(uint32_t time) {
 
     float boilerSupplyTempFloat = std::stof(boilerSupplyTemp);
     ESP_LOGI(TAG, "boilerSupplyTemp float: %.2f", boilerSupplyTempFloat); 
-    Measurements::Measurement::AddFormatter("boilerSupplyTemp", "%.2f"); 
-    Measurements::Measurement boilerSupplyTempMeasurement("boilerSupplyTemp", boilerSupplyTempFloat);
+    Measurements::Measurement::AddFormatter("temp_sup__degC", "%.2f"); 
+    Measurements::Measurement boilerSupplyTempMeasurement("temp_sup__degC", boilerSupplyTempFloat);
     auto boilerSupplyTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerSupplyTempSecureUploadQueue.AddMeasurement(boilerSupplyTempMeasurement);
 
     float boilerReturnTempFloat = std::stof(boilerReturnTemp);
     ESP_LOGI(TAG, "boilerReturnTemp float: %.2f", boilerSupplyTempFloat);
-    Measurements::Measurement::AddFormatter("boilerReturnTemp", "%.2f"); 
-    Measurements::Measurement boilerReturnTempMeasurement("boilerReturnTemp", boilerReturnTempFloat);
+    Measurements::Measurement::AddFormatter("temp_ret__degC", "%.2f"); 
+    Measurements::Measurement boilerReturnTempMeasurement("temp_ret__degC", boilerReturnTempFloat);
     auto boilerReturnTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerReturnTempSecureUploadQueue.AddMeasurement(boilerReturnTempMeasurement);
                 
@@ -431,24 +431,24 @@ std::string get_5min_measurements_data(uint32_t time) {
     //ESP_LOGI(TAG, "roomSetpoint char: %c", roomSetpoint); 
     float roomSetPointFloat = std::stof(roomSetpoint);
     ESP_LOGI(TAG, "roomSetpoint float: %.2f", roomSetPointFloat); 
-    Measurements::Measurement::AddFormatter("roomSetpointTemp", "%.2f"); 
-    Measurements::Measurement roomSetpointTempMeasurement("roomSetpointTemp", roomSetPointFloat);
+    Measurements::Measurement::AddFormatter("temp_set__degC", "%.2f"); 
+    Measurements::Measurement roomSetpointTempMeasurement("temp_set__degC", roomSetPointFloat);
     auto roomSetpointTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     roomSetpointTempSecureUploadQueue.AddMeasurement(roomSetpointTempMeasurement);
 
     //ESP_LOGI(TAG, "roomTemp char: %c", roomTemp); 
     float roomTempFloat = std::stof(roomTemp);
     ESP_LOGI(TAG, "roomTemp float: %.2f", roomTempFloat); 
-    Measurements::Measurement::AddFormatter("roomTemp", "%.2f"); 
-    Measurements::Measurement roomTempMeasurement("roomTemp", roomTempFloat);
+    Measurements::Measurement::AddFormatter("temp_in__degC", "%.2f"); 
+    Measurements::Measurement roomTempMeasurement("temp_in__degC", roomTempFloat);
     auto roomTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     roomTempSecureUploadQueue.AddMeasurement(roomTempMeasurement);
 
     //ESP_LOGI(TAG, "boilerMaxSupplyTemp char: %c", boilerMaxSupplyTemp); 
     float boilerMaxSupplyTempFloat = std::stof(boilerMaxSupplyTemp);
     ESP_LOGI(TAG, "boilerMaxSupplyTemp float: %.2f", boilerMaxSupplyTempFloat); 
-    Measurements::Measurement::AddFormatter("boilerMaxSupplyTemp", "%.2f"); 
-    Measurements::Measurement boilerMaxSupplyTempMeasurement("boilerMaxSupplyTemp", boilerMaxSupplyTempFloat);
+    Measurements::Measurement::AddFormatter("temp_ch_max__degC", "%.2f"); 
+    Measurements::Measurement boilerMaxSupplyTempMeasurement("temp_ch_max__degC", boilerMaxSupplyTempFloat);
     auto boilerMaxSupplyTempSecureUploadQueue = SecureUpload::Queue::GetInstance();
     boilerMaxSupplyTempSecureUploadQueue.AddMeasurement(boilerMaxSupplyTempMeasurement);
 
@@ -506,32 +506,32 @@ std::string get_regular_measurements_data(uint32_t time) {
     ESP_LOGI(TAG, "max_boiler_cap %d", maxBoilerCap);
 
     
-    Measurements::Measurement::AddFormatter("isCentralHeatingModeOn", "%d"); //d Huub think it is isCentralHeatingModeOn 
-    Measurements::Measurement ch_modeMeasurement("isCentralHeatingModeOn", ch_mode);
+    Measurements::Measurement::AddFormatter("ch__bool", "%d"); //d Huub think it is isCentralHeatingModeOn 
+    Measurements::Measurement ch_modeMeasurement("ch__bool", ch_mode);
     auto ch_modeSecureUploadQueue = SecureUpload::Queue::GetInstance();
     ch_modeSecureUploadQueue.AddMeasurement(ch_modeMeasurement);
-    Measurements::Measurement::AddFormatter("isDomesticHotWaterModeOn", "%d"); 
-    Measurements::Measurement dhw_modeMeasurement("isDomesticHotWaterModeOn", dhw_mode);
+    Measurements::Measurement::AddFormatter("dwh__bool", "%d"); 
+    Measurements::Measurement dhw_modeMeasurement("dwh__bool", dhw_mode);
     auto dhw_modeSecureUploadQueue = SecureUpload::Queue::GetInstance();
     dhw_modeSecureUploadQueue.AddMeasurement(dhw_modeMeasurement);
-    Measurements::Measurement::AddFormatter("isBoilerFlameOn", "%d"); //d Huub: I think flame is the same as isBoilerFlameOn?
-    Measurements::Measurement isBoilerFlameOnMeasurement("isBoilerFlameOn", flame);
+    Measurements::Measurement::AddFormatter("flame__bool", "%d"); //d Huub: I think flame is the same as isBoilerFlameOn?
+    Measurements::Measurement isBoilerFlameOnMeasurement("flame__bool", flame);
     auto isBoilerFlameOnSecureUploadQueue = SecureUpload::Queue::GetInstance();
     isBoilerFlameOnSecureUploadQueue.AddMeasurement(isBoilerFlameOnMeasurement);
-    Measurements::Measurement::AddFormatter("maxModulationLevel", "%d"); 
-    Measurements::Measurement maxModulationLevelMeasurement("maxModulationLevel", maxRelModLvl); //d Huub: same as maxModulationLevel?
+    Measurements::Measurement::AddFormatter("mod_max__0", "%d"); 
+    Measurements::Measurement maxModulationLevelMeasurement("mod_max__0", maxRelModLvl); //d Huub: same as maxModulationLevel?
     auto maxModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     maxModulationLevelSecureUploadQueue.AddMeasurement(maxModulationLevelMeasurement);
-    Measurements::Measurement::AddFormatter("minModulationLevel", "%d"); 
-    Measurements::Measurement minModulationLevelMeasurement("minModulationLevel", minModLvl); //d Huub: same as minModulationLevel?
+    Measurements::Measurement::AddFormatter("mod_min__0", "%d"); 
+    Measurements::Measurement minModulationLevelMeasurement("mod_min__0", minModLvl); //d Huub: same as minModulationLevel?
     auto minModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     minModulationLevelSecureUploadQueue.AddMeasurement(minModulationLevelMeasurement); //d
-    Measurements::Measurement::AddFormatter("relativeModulationLevel", "%d"); 
-    Measurements::Measurement relativeModulationLevelMeasurement("relativeModulationLevel", relModLvl); //d Huub: same as relativeModulationLevel?
+    Measurements::Measurement::AddFormatter("mod__0", "%d"); 
+    Measurements::Measurement relativeModulationLevelMeasurement("mod__0", relModLvl); //d Huub: same as relativeModulationLevel?
     auto relativeModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     relativeModulationLevelSecureUploadQueue.AddMeasurement(relativeModulationLevelMeasurement);
-    Measurements::Measurement::AddFormatter("maxBoilerCap", "%d"); //d
-    Measurements::Measurement maxBoilerCapMeasurement("maxBoilerCap", maxBoilerCap);
+    Measurements::Measurement::AddFormatter("cap_max__kW", "%d"); //d
+    Measurements::Measurement maxBoilerCapMeasurement("cap_max__kW", maxBoilerCap);
     auto maxBoilerCapSecureUploadQueue = SecureUpload::Queue::GetInstance();
     maxBoilerCapSecureUploadQueue.AddMeasurement(maxBoilerCapMeasurement);
 
