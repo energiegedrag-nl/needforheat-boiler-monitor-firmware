@@ -22,20 +22,20 @@ A Twomes boiler BASE device, in addition to [generic data sent by any Twomes mea
 
 | Sensor  | Property                 | Unit                   | Printf format | Measurement interval [h:mm:ss] | OpenTherm ID | Part | Description                                |
 |---------|--------------------------|------------------------|---------------|--------------------------------|--------------|------|--------------------------------------------|
-|         | isBoilerFlameOn          | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/3 | STATUS /Flame status                       |
-|         | isCentralHeatingModeOn   | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/1 | STATUS/CH mode                             |
-|         | isDomesticHotWaterModeOn | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/2 | STATUS/DHW mode                            |
-|         | maxModulationLevel       | %                      | %d            | 0:01:00                        | 14           |      | CAPACITY SETTING                           |
-|         | maxBoilerCap             | kW                     | %d            | 0:01:00                        | 15           | HB   | MAX CAPACITY                               |
-|         | minModulationLevel       | %                      | %d            | 0:01:00                        | 15           | LB   | MIN-MOD-LEVEL                              |
-|         | roomSetpointTemp         | °C                     | %.2f          | 0:05:00                        | 16           |      | ROOM SETPOINT                              |
-|         | relativeModulationLevel  | %                      | %d            | 0:01:00                        | 17           |      | RELATIVE MODULATION LEVEL                  |
-|         | roomTemp                 | °C                     | %.2f          | 0:05:00                        | 24           |      | ROOM TEMPERATURE                           |
-|         | boilerMaxSupplyTemp      | °C                     | %.2f          | 0:05:00                        | 57           |      | MAX CH WATER SETPOINT                      |
-|         | boilerSupplyTemp         | °C                     | %.2f          | 0:01:00                        | 25           |      | BOILER WATER TEMP.                         |
-|         | boilerReturnTemp         | °C                     | %.2f          | 0:01:00                        | 28           |      | RETURN WATER TEMPERATURE                   |
-| DS18b20 | boilerTemp1              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
-| DS18b20 | boilerTemp2              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
+|         | flame__bool          | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/3 | STATUS /Flame status                       |
+|         | ch__bool   | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/1 | STATUS/CH mode                             |
+|         | dhw__bool | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/2 | STATUS/DHW mode                            |
+|         | mod_max__0       | %                      | %d            | 0:01:00                        | 14           |      | CAPACITY SETTING                           |
+|         | cap_max__kW             | kW                     | %d            | 0:01:00                        | 15           | HB   | MAX CAPACITY                               |
+|         | mod_min__0       | %                      | %d            | 0:01:00                        | 15           | LB   | MIN-MOD-LEVEL                              |
+|         | temp_set__degC         | °C                     | %.2f          | 0:05:00                        | 16           |      | ROOM SETPOINT                              |
+|         | mod__0  | %                      | %d            | 0:01:00                        | 17           |      | RELATIVE MODULATION LEVEL                  |
+|         | temp_in__degC                 | °C                     | %.2f          | 0:05:00                        | 24           |      | ROOM TEMPERATURE                           |
+|         | temp_ch_max__degC      | °C                     | %.2f          | 0:05:00                        | 57           |      | MAX CH WATER SETPOINT                      |
+|         | temp_sup__degC         | °C                     | %.2f          | 0:01:00                        | 25           |      | BOILER WATER TEMP.                         |
+|         | temp_ret__degC         | °C                     | %.2f          | 0:01:00                        | 28           |      | RETURN WATER TEMPERATURE                   |
+| DS18b20 | temp1__degC              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
+| DS18b20 | temp2__degC              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
 
 ## Deploying
 To deploy this software, see the [deploying section in the twomes-generic-esp-firmware library documentation](https://www.energietransitiewindesheim.nl/twomes-generic-esp-firmware/deploying/prerequisites/). The firmware needed can be found as a [release from this repository](https://github.com/energietransitie/twomes-presence-detector/releases).
