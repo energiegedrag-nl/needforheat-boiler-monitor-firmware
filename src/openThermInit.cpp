@@ -518,16 +518,16 @@ std::string get_regular_measurements_data(uint32_t time) {
     Measurements::Measurement isBoilerFlameOnMeasurement("flame__bool", flame);
     auto isBoilerFlameOnSecureUploadQueue = SecureUpload::Queue::GetInstance();
     isBoilerFlameOnSecureUploadQueue.AddMeasurement(isBoilerFlameOnMeasurement);
-    Measurements::Measurement::AddFormatter("mod_max__0", "%d"); 
-    Measurements::Measurement maxModulationLevelMeasurement("mod_max__0", maxRelModLvl); //d Huub: same as maxModulationLevel?
+    Measurements::Measurement::AddFormatter("mod_max__0", "%.2f"); 
+    Measurements::Measurement maxModulationLevelMeasurement("mod_max__0", static_cast<float>(maxRelModLvl) / 100.0F); //d Huub: same as maxModulationLevel?
     auto maxModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     maxModulationLevelSecureUploadQueue.AddMeasurement(maxModulationLevelMeasurement);
-    Measurements::Measurement::AddFormatter("mod_min__0", "%d"); 
-    Measurements::Measurement minModulationLevelMeasurement("mod_min__0", minModLvl); //d Huub: same as minModulationLevel?
+    Measurements::Measurement::AddFormatter("mod_min__0", "%.2f"); 
+    Measurements::Measurement minModulationLevelMeasurement("mod_min__0", static_cast<float>(minModLvl) / 100.0F); //d Huub: same as minModulationLevel?
     auto minModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     minModulationLevelSecureUploadQueue.AddMeasurement(minModulationLevelMeasurement); //d
-    Measurements::Measurement::AddFormatter("mod__0", "%d"); 
-    Measurements::Measurement relativeModulationLevelMeasurement("mod__0", relModLvl); //d Huub: same as relativeModulationLevel?
+    Measurements::Measurement::AddFormatter("mod__0", "%.2f"); 
+    Measurements::Measurement relativeModulationLevelMeasurement("mod__0", static_cast<float>(relModLvl) / 100.0F); //d Huub: same as relativeModulationLevel?
     auto relativeModulationLevelSecureUploadQueue = SecureUpload::Queue::GetInstance();
     relativeModulationLevelSecureUploadQueue.AddMeasurement(relativeModulationLevelMeasurement);
     Measurements::Measurement::AddFormatter("cap_max__kW", "%d"); //d

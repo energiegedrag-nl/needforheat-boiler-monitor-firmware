@@ -25,11 +25,11 @@ A Twomes boiler BASE device, in addition to [generic data sent by any Twomes mea
 |         | flame__bool          | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/3 | STATUS /Flame status                       |
 |         | ch__bool   | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/1 | STATUS/CH mode                             |
 |         | dhw__bool | bool (0=False; 1=True) | %d            | 0:01:00                        | 0            | LB/2 | STATUS/DHW mode                            |
-|         | mod_max__0       | %                      | %d            | 0:01:00                        | 14           |      | CAPACITY SETTING                           |
+|         | mod_max__0       | %                      | %.2f            | 0:01:00                        | 14           |      | CAPACITY SETTING                           |
 |         | cap_max__kW             | kW                     | %d            | 0:01:00                        | 15           | HB   | MAX CAPACITY                               |
-|         | mod_min__0       | %                      | %d            | 0:01:00                        | 15           | LB   | MIN-MOD-LEVEL                              |
+|         | mod_min__0       | %                      | %.2f            | 0:01:00                        | 15           | LB   | MIN-MOD-LEVEL                              |
 |         | temp_set__degC         | °C                     | %.2f          | 0:05:00                        | 16           |      | ROOM SETPOINT                              |
-|         | mod__0  | %                      | %d            | 0:01:00                        | 17           |      | RELATIVE MODULATION LEVEL                  |
+|         | mod__0  | %                      | %.2f            | 0:01:00                        | 17           |      | RELATIVE MODULATION LEVEL                  |
 |         | temp_in__degC                 | °C                     | %.2f          | 0:05:00                        | 24           |      | ROOM TEMPERATURE                           |
 |         | temp_ch_max__degC      | °C                     | %.2f          | 0:05:00                        | 57           |      | MAX CH WATER SETPOINT                      |
 |         | temp_sup__degC         | °C                     | %.2f          | 0:01:00                        | 25           |      | BOILER WATER TEMP.                         |
