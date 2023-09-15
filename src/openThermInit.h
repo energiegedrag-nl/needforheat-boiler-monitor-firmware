@@ -22,18 +22,18 @@ static const char *TAG = "Twomes ESP32 OpenTherm Monitor main";
 
 extern char variable_upload_payload_template[];
 
-static const char supply_temp_property_name[]       = "boilerSupplyTemp";
-static const char return_temp_property_name[]       = "boilerReturnTemp";
-static const char ch_mode_property_name[]           = "isCentralHeatingModeOn";
-static const char dhw_mode_property_name[]          = "isDomesticHotWaterModeOn";
-static const char flame_property_name[]             = "isBoilerFlameOn";
-static const char room_setpoint_property_name[]     = "roomSetpointTemp";
-static const char room_temp_property_name[]         = "roomTemp";
-static const char max_rel_mod_lvl_property_name[]   = "maxModulationLevel";
-static const char min_mod_lvl_property_name[]       = "minModulationLevel";
-static const char rel_mod_lvl_property_name[]       = "relativeModulationLevel";
-static const char max_boiler_cap_property_name[]    = "maxBoilerCap";
-static const char max_supply_temp_property_name[]   = "boilerMaxSupplyTemp";
+static const char supply_temp_property_name[]       = "temp_sup__degC";
+static const char return_temp_property_name[]       = "temp_ret__degC";
+static const char ch_mode_property_name[]           = "ch__bool";
+static const char dhw_mode_property_name[]          = "dwh__bool";
+static const char flame_property_name[]             = "flame__bool";
+static const char room_setpoint_property_name[]     = "temp_set__degC";
+static const char room_temp_property_name[]         = "temp_in__degC";
+static const char max_rel_mod_lvl_property_name[]   = "mod_max__0";
+static const char min_mod_lvl_property_name[]       = "mod_min__0";
+static const char rel_mod_lvl_property_name[]       = "mod__0";
+static const char max_boiler_cap_property_name[]    = "cap_max__kW";
+static const char max_supply_temp_property_name[]   = "temp_ch_max__degC";
 
 #define BOILER_MEASUREMENT_INTERVAL_S       10    // seconds
 #define ROOM_TEMP_MEASUREMENT_INTERVAL_S    300   // seconds (5 min * 60 s/min)
@@ -83,13 +83,13 @@ extern char boilerMaxSupplyTemp[FLOAT_STRING_LENGTH]; // Maximum water temperatu
 // const char *dhw_mode_name = "dhwmode";
 // const char *flame_name = "flame";
 // const char *room_setpoint_name = "roomSetpoint";
-// const char *room_temp_name = "roomTemp";
-// const char *boiler_temp_name = "boilerSupplyTemp";
-// const char *return_temp_name = "boilerReturnTemp";
+// const char *room_temp_name = "temp_in__degC";
+// const char *boiler_temp_name = "temp_sup__degC";
+// const char *return_temp_name = "temp_ret__degC";
 // const char *max_rel_mod_lvl_name = "maxRelModLvl";
 // const char *min_mod_lvl_name = "minModLvl";
 // const char *rel_mod_lvl_name = "relModLvl";
-// const char *max_boiler_cap_name = "maxBoilerCap";
+// const char *max_boiler_cap_name = "cap_max__kW";
 
 extern char hex[5];     // Max 4 hex chars (two bytes) + null-terminator
 extern int pointer; // Used to keep track of position of received character
