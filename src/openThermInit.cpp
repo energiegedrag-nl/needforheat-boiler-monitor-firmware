@@ -1,6 +1,6 @@
 #include <string>
 #include <stdlib.h>
-#include "opentherm.h"
+#include "openTherm.h"
 #include "driver/timer.h"
 #include <cmath>
 //#include "../lib/generic_esp_32.h" //Huub: copied from twomes-opentherm-monitor-firmware
