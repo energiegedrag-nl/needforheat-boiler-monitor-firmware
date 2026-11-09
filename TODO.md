@@ -6,7 +6,6 @@ Items that touch several repositories are written out in full in one *lead* repo
 
 ## Now: needed to run at home this winter
 
-- [ ] <a id="bmbuild"></a>**Firmware does not build.** The OpenTherm library dependency is missing; restore or vendor it so CI builds again.
 - [ ] → Release workflow without the Windesheim signing key — see [needforheat-generic-firmware](https://github.com/energiegedrag-nl/needforheat-generic-firmware/blob/main/TODO.md#unsigned) *(Trello #480)*
 
 ## Soon: robustness and correctness
@@ -23,3 +22,7 @@ Items that touch several repositories are written out in full in one *lead* repo
 - [ ] → Fix links and errors in device manuals — see [needforheat-manuals](https://github.com/energiegedrag-nl/needforheat-manuals/blob/prd/TODO.md#manlinks) *(Trello #718, #995, #719)*
 - [ ] → BoilerBASE electronics — see [needforheat-boiler-monitor-hardware](https://github.com/energiegedrag-nl/needforheat-boiler-monitor-hardware/blob/main/TODO.md#bmpcb) *(Trello #299, #657, #1054, #1053, #1056, #566)*
 - [ ] → Other boiler protocols — see [needforheat-boiler-monitor-hardware](https://github.com/energiegedrag-nl/needforheat-boiler-monitor-hardware/blob/main/TODO.md#protocols) *(Trello #287)*
+
+## Recently done
+
+- [x] Firmware builds again in CI: include case `openTherm.h` (the OpenTherm code was never missing), Python 3.10 and current actions, updated TLS roots (#1)
