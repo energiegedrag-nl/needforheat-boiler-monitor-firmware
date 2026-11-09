@@ -1,6 +1,8 @@
 # Twomes boiler BASE firmware
 
-For the associated hardware design files for the Twomes boiler BASE and enclosure and tips and instructions how to produce and assemble the hardware, please see the [twomes-boiler-base-hardware](https://github.com/energietransitie/twomes-boiler-base-hardware) repository. 
+For the associated hardware design files for the Twomes boiler BASE and enclosure and tips and instructions how to produce and assemble the hardware, please see the [twomes-boiler-base-hardware](https://github.com/energiegedrag-nl/needforheat-boiler-monitor-hardware) repository. 
+
+> **Own deployment.** This repository is maintained by [energiegedrag-nl](https://github.com/energiegedrag-nl) and deployed under `energiegedrag.nl`. To run your own instance, replace `energiegedrag-nl` by your GitHub organisation and `energiegedrag.nl` by your domain (hosts used: `api.<domain>`, `manuals.<domain>`), consistently in configuration and build settings.
 
 ## Table of contents
 * [General info](#general-info)
@@ -14,11 +16,11 @@ For the associated hardware design files for the Twomes boiler BASE and enclosur
 * [Credits](#credits)
 
 ## General info
-The Twomes Presence Detector primarily serves as an example and template repository how to create firmware that uses the [twomes-generic-esp-firmware](https://github.com/energietransitie/twomes-generic-esp-firmware) library. Nevertheless, it can be used in  measurement campaigns that require occupancy detection using Bluetooth name requests.
+The Twomes Presence Detector primarily serves as an example and template repository how to create firmware that uses the [twomes-generic-esp-firmware](https://github.com/energiegedrag-nl/needforheat-generic-firmware) library. Nevertheless, it can be used in  measurement campaigns that require occupancy detection using Bluetooth name requests.
 
 ## Measurements
 
-A Twomes boiler BASE device, in addition to [generic data sent by any Twomes measurement device](https://github.com/energietransitie/twomes-generic-esp-firmware#readme), sends data about the following properties via the [Twomes API](https://github.com/energietransitie/twomes-backoffice-api) to a Twomes server:
+A Twomes boiler BASE device, in addition to [generic data sent by any Twomes measurement device](https://github.com/energiegedrag-nl/needforheat-generic-firmware#readme), sends data about the following properties via the [Twomes API](https://github.com/energiegedrag-nl/needforheat-server-api) to a Twomes server:
 
 | Sensor  | Property                 | Unit                   | Printf format | Measurement interval [h:mm:ss] | OpenTherm ID | Part | Description                                |
 |---------|--------------------------|------------------------|---------------|--------------------------------|--------------|------|--------------------------------------------|
@@ -38,10 +40,10 @@ A Twomes boiler BASE device, in addition to [generic data sent by any Twomes mea
 | DS18b20 | temp2__degC              | °C                     | %.2f          | 0:01:00                        |              |      | temperature of hydronic supply/return pipe |
 
 ## Deploying
-To deploy this software, see the [deploying section in the twomes-generic-esp-firmware library documentation](https://www.energietransitiewindesheim.nl/twomes-generic-esp-firmware/deploying/prerequisites/). The firmware needed can be found as a [release from this repository](https://github.com/energietransitie/twomes-presence-detector/releases).
+To deploy this software, see the [deploying section in the twomes-generic-esp-firmware library documentation](https://github.com/energiegedrag-nl/needforheat-generic-firmware/blob/main/docs/deploying/prerequisites.md). The firmware needed can be found as a [release from this repository](https://github.com/energiegedrag-nl/needforheat-presence-detector-firmware/releases).
 
 ## Developing
-To develop software for, or based on this software, see the [developing section in the twomes-generic-esp-firmware library documentation](https://www.energietransitiewindesheim.nl/twomes-generic-esp-firmware/starting/prerequisites/)
+To develop software for, or based on this software, see the [developing section in the twomes-generic-esp-firmware library documentation](https://github.com/energiegedrag-nl/needforheat-generic-firmware/blob/main/docs/starting/prerequisites.md)
 
 ## Supported devices
 This example was tested on:
@@ -77,5 +79,5 @@ Product owners:
 
 We use and gratefully acknowlegde the efforts of the makers of the following source code and libraries:
 * [OpenTherm Arduino/ESP8266 Library](https://github.com/ihormelnyk/opentherm_library/), by Ihor Melnyk, licensed under [MIT License](https://github.com/ihormelnyk/opentherm_library/blob/master/LICENSE)
-* [Twomes OpenTherm monitor](https://github.com/energietransitie/twomes-opentherm-monitor-firmware), by Research Group Energy Transition at Windesheim University of Applied Sciences, licenced under [Apache 2.0](https://raw.githubusercontent.com/energietransitie/twomes-opentherm-monitor-firmware/main/LICENSE)
+* [Twomes OpenTherm monitor](https://github.com/energiegedrag-nl/twomes-opentherm-monitor-firmware), by Research Group Energy Transition at Windesheim University of Applied Sciences, licenced under [Apache 2.0](https://raw.githubusercontent.com/energietransitie/twomes-opentherm-monitor-firmware/main/LICENSE)
 * [Twomes Boiler Monitor Module Firmware](https://github.com/energietransitie/twomes-boiler-monitor-firmware), by Research Group Energy Transition at Windesheim University of Applied Sciences, licenced under [Apache 2.0](https://raw.githubusercontent.com/energietransitie/twomes-opentherm-monitor-firmware/main/LICENSE)
